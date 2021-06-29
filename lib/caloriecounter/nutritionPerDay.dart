@@ -16,11 +16,16 @@ class _NutritionPerDayState extends State<NutritionPerDay> {
   bool flag = false;
   int tcab = 0, tcal = 0, tfat = 0, tgram = 0, tprot = 0;
 
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+  CollectionReference collection =
+      FirebaseFirestore.instance.collection('caloriecounter');
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    // getTotalData();
+    _read();
     // fetchData();
   }
 
@@ -33,7 +38,7 @@ class _NutritionPerDayState extends State<NutritionPerDay> {
             .collection('caloriecounter')
             .doc(widget.gUser.email)
             .collection('food')
-            .doc()
+            .doc(widget.selectedDate.toString())
             .snapshots(),
         builder:
             (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
@@ -46,8 +51,6 @@ class _NutritionPerDayState extends State<NutritionPerDay> {
 
           try {
             food = snapshot.data!.data();
-
-            //calc(food, food.length);
 
             setState(() {
               flag = false;
@@ -292,69 +295,39 @@ class _NutritionPerDayState extends State<NutritionPerDay> {
     ));
   }
 
-  void getTotalData() async {
-    FirebaseFirestore.instance
-        .collection('caloriecounter')
-        .doc(widget.gUser.email)
-        .collection('food')
-        .doc(widget.selectedDate.toString())
-        .get()
-        .then((DocumentSnapshot documentSnapshot) {
-      if (documentSnapshot.exists) {
-        print('Document exists on the database');
-        print(documentSnapshot.reference);
-      }
-    });
-
-    FirebaseFirestore.instance
-        .collection('caloriecounter')
-        .doc(widget.gUser.email)
-        .get()
-        .then((DocumentSnapshot ds) => {
-              setState(() {
-                ds.data();
-                print((ds.data() as dynamic)['carbon'].toString());
-              }),
-            });
-  }
-
-  fetchData() async {
-    var documentReference = FirebaseFirestore.instance
-        .collection('caloriecounter')
-        .doc(widget.gUser.email)
-        .collection('food')
-        .doc(widget.selectedDate.toString());
-    FirebaseFirestore.instance
-        .collection('caloriecounter')
-        .doc(widget.gUser.email)
-        .collection('food')
-        .doc(widget.selectedDate.toString())
-        .collection('meals')
-        .get()
-        .then((QuerySnapshot querySnapshot) => {
-              querySnapshot.docs.forEach((doc) {
-                tcab = 0;
-                tcal = 0;
-                tfat = 0;
-                tgram = 0;
-                tprot = 0;
-                for (var item in querySnapshot.docs) {
-                  // tcab = tcab + item['carbon'];
-                  // tcal = tcal + item['calories'];
-                  // tfat = tfat + item['fats'];
-                  // tprot = tprot + item['protiens'];
-                  // tgram = tgram + item['grams'];
-                }
-                tcab = doc['carbon'];
-                tcal = doc['calories'];
-                tfat = doc['fats'];
-                tprot = doc['protiens'];
-                tgram = doc['grams'];
-              }),
-              print('Carbs total' + tcab.toString()),
-              print('cal total' + tcal.toString()),
-              print('fat total' + tfat.toString()),
-              print('protien total' + tprot.toString()),
-            });
+  void _read() async {
+    try {
+      FirebaseFirestore.instance
+          .collection('caloriecounter')
+          .doc(widget.gUser.email)
+          .collection('food')
+          .doc(widget.selectedDate.toString())
+          .collection('meals')
+          .get()
+          .then((QuerySnapshot querySnapshot) {
+        querySnapshot.docs.forEach((doc) {
+          // tcab = doc['carbon'];
+          // print('Carbon Data  ' + tcab.toString());
+          tcab = 0;
+          tcal = 0;
+          tfat = 0;
+          tgram = 0;
+          tprot = 0;
+          for (var item in querySnapshot.docs) {
+            tcab = tcab + item['carbon'] as int;
+            tcal = tcal + item['calories'] as int;
+            tfat = tfat + item['fats'] as int;
+            tprot = tprot + item['protiens'] as int;
+            tgram = tgram + item['grams'] as int;
+          }
+        });
+        print('Carbon Total  ' + tcab.toString());
+        print('calories Total  ' + tcal.toString());
+        print('fats Total  ' + tfat.toString());
+        print('protiens Total  ' + tprot.toString());
+      });
+    } catch (e) {
+      print(e);
+    }
   }
 }
