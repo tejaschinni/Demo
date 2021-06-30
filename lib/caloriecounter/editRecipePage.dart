@@ -1,20 +1,20 @@
-import 'package:caloriecounter/caloriecounter/viewPage.dart';
+import 'package:caloriecounter/caloriecounter/viewRecipePage.dart';
+import 'package:caloriecounter/signInPage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-class AddRecipePage extends StatefulWidget {
+class EditRecipePage extends StatefulWidget {
   Function signOut;
   GoogleSignInAccount gUser;
-  DateTime selectedDate;
-
-  AddRecipePage(this.gUser, this.selectedDate, this.signOut);
+  var recipes;
+  EditRecipePage(this.gUser, this.signOut, this.recipes);
 
   @override
-  _AddRecipePageState createState() => _AddRecipePageState();
+  _EditRecipePageState createState() => _EditRecipePageState();
 }
 
-class _AddRecipePageState extends State<AddRecipePage> {
+class _EditRecipePageState extends State<EditRecipePage> {
   TextEditingController nameController = TextEditingController();
   TextEditingController gramsController = TextEditingController();
   TextEditingController carbonController = TextEditingController();
@@ -25,8 +25,6 @@ class _AddRecipePageState extends State<AddRecipePage> {
   CollectionReference collection =
       FirebaseFirestore.instance.collection('caloriecounter');
 
-  bool validator = false;
-
   String name = ' ';
   int grams = 0, carbon = 0, fats = 0, protiens = 0, calories = 0;
 
@@ -34,25 +32,39 @@ class _AddRecipePageState extends State<AddRecipePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    nameController.text = widget.recipes['name'];
+    fatsController.text = widget.recipes['fats'].toString();
+    caloriesController.text = widget.recipes['calories'].toString();
+    gramsController.text = widget.recipes['grams'].toString();
+    carbonController.text = widget.recipes['carbon'].toString();
+    protiensController.text = widget.recipes['protiens'].toString();
+
+    recipe();
   }
 
-  void validate() {
-    if (nameController.text.length > 2) {
-      setState(() {
-        validator = false;
-      });
-    } else {
-      setState(() {
-        validator = true;
-      });
-    }
+  void recipe() {
+    // print('Recpess page ----------------' + widget.recipes.toString());
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('data'),
+        title: Text('Edit Recipe Page'),
+        actions: [
+          Center(
+            child: Container(
+              child: InkWell(
+                child: Icon(Icons.person),
+                onTap: () {
+                  widget.signOut();
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (contex) => SigInPage()));
+                },
+              ),
+            ),
+          )
+        ],
       ),
       body: SafeArea(
         child: Center(
@@ -259,7 +271,7 @@ class _AddRecipePageState extends State<AddRecipePage> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
-          addFood();
+          updatRecipes();
           nameController.text = "";
           protiensController.text = "";
           caloriesController.text = "";
@@ -277,7 +289,7 @@ class _AddRecipePageState extends State<AddRecipePage> {
               context,
               MaterialPageRoute(
                   builder: (context) =>
-                      ViewPage(widget.gUser, widget.signOut)));
+                      ViewRecipePage(widget.gUser, widget.signOut)));
 
           // if (validator) {
           //   print('name is not given ');
@@ -289,14 +301,20 @@ class _AddRecipePageState extends State<AddRecipePage> {
     );
   }
 
-  Future<void> addFood() async {
-    collection.doc(widget.gUser.email).collection('recipes').doc().set({
-      'name': name,
-      'fats': fats,
-      'grams': grams,
-      'protiens': protiens,
-      'calories': calories,
-      'carbon': carbon
-    });
+  Future<void> updatRecipes() async {
+    collection
+        .doc(widget.gUser.email)
+        .collection('recipes')
+        .doc()
+        .update({
+          'name': nameController.text,
+          'fats': fatsController.text,
+          'grams': gramsController.text,
+          'protiens': protiensController.text,
+          'calories': caloriesController.text,
+          'carbon': carbonController.text
+        })
+        .then((value) => print('Recipes Updated'))
+        .catchError((onError) => print('Failed to Update Recipe'));
   }
 }

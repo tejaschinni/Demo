@@ -274,48 +274,33 @@ class _AddDailyIntakePageState extends State<AddDailyIntakePage> {
             ),
           ),
         ),
-        floatingActionButton: SpeedDial(
+        floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
-          children: [
-            SpeedDialChild(
-                child: Icon(Icons.add),
-                label: 'Daily Intake',
-                onTap: () {
-                  setState(() {
-                    addFood();
-                    _read();
+          onPressed: () {
+            setState(() {
+              addFood();
+              _read();
 
-                    nameController.text = "";
-                    protiensController.text = "";
-                    caloriesController.text = "";
-                    gramsController.text = "";
-                    fatsController.text = "";
-                    carbonController.text = "";
-                    name = "";
-                    fats = 0;
-                    grams = 0;
-                    protiens = 0;
-                    calories = 0;
-                    carbon = 0;
+              nameController.text = "";
+              protiensController.text = "";
+              caloriesController.text = "";
+              gramsController.text = "";
+              fatsController.text = "";
+              carbonController.text = "";
+              name = "";
+              fats = 0;
+              grams = 0;
+              protiens = 0;
+              calories = 0;
+              carbon = 0;
 
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                ViewPage(widget.gUser, widget.signOut)));
-                  });
-                }),
-            SpeedDialChild(
-                child: Icon(Icons.add),
-                label: 'Daily Intake',
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => AddRecipePage(widget.gUser,
-                              widget.selectedDate, widget.signOut)));
-                })
-          ],
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          ViewPage(widget.gUser, widget.signOut)));
+            });
+          },
         ));
   }
 

@@ -306,8 +306,6 @@ class _NutritionPerDayState extends State<NutritionPerDay> {
           .get()
           .then((QuerySnapshot querySnapshot) {
         querySnapshot.docs.forEach((doc) {
-          // tcab = doc['carbon'];
-          // print('Carbon Data  ' + tcab.toString());
           tcab = 0;
           tcal = 0;
           tfat = 0;
@@ -319,6 +317,17 @@ class _NutritionPerDayState extends State<NutritionPerDay> {
             tfat = tfat + item['fats'] as int;
             tprot = tprot + item['protiens'] as int;
             tgram = tgram + item['grams'] as int;
+            collection
+                .doc(widget.gUser.email)
+                .collection('food')
+                .doc(widget.selectedDate.toString())
+                .set({
+              'tcalories': tcal,
+              'tcrabs': tcab,
+              'tfat': tfat,
+              'tprotiens': tprot,
+              'tgram': tgram
+            });
           }
         });
         print('Carbon Total  ' + tcab.toString());

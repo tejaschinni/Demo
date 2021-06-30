@@ -1,3 +1,4 @@
+import 'package:caloriecounter/signInPage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -49,6 +50,18 @@ class _UserRegisterPageState extends State<UserRegisterPage> {
       ),
       appBar: AppBar(
         title: Text('User Profile'),
+        actions: [
+          Center(
+            child: InkWell(
+              child: Icon(Icons.person),
+              onTap: () {
+                widget.signOut();
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (contex) => SigInPage()));
+              },
+            ),
+          )
+        ],
       ),
       body: Container(
         child: Column(
