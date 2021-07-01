@@ -7,8 +7,10 @@ import 'package:google_sign_in/google_sign_in.dart';
 class EditRecipePage extends StatefulWidget {
   Function signOut;
   GoogleSignInAccount gUser;
+  var document;
   var recipes;
-  EditRecipePage(this.gUser, this.signOut, this.recipes);
+
+  EditRecipePage(this.gUser, this.signOut, this.recipes, this.document);
 
   @override
   _EditRecipePageState createState() => _EditRecipePageState();
@@ -32,6 +34,7 @@ class _EditRecipePageState extends State<EditRecipePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    print('Recipe id -------------' + widget.document.toString());
     nameController.text = widget.recipes['name'];
     fatsController.text = widget.recipes['fats'].toString();
     caloriesController.text = widget.recipes['calories'].toString();
@@ -305,7 +308,7 @@ class _EditRecipePageState extends State<EditRecipePage> {
     collection
         .doc(widget.gUser.email)
         .collection('recipes')
-        .doc()
+        .doc(widget.document)
         .update({
           'name': nameController.text,
           'fats': fatsController.text,

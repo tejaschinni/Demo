@@ -16,171 +16,72 @@ class ViewRecipePage extends StatefulWidget {
 }
 
 class _ViewRecipePageState extends State<ViewRecipePage> {
+  CollectionReference firestore =
+      FirebaseFirestore.instance.collection('caloriecounter');
   bool flag = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('View Recipes'),
-        actions: [
-          Center(
-            child: Container(
-              child: InkWell(
-                child: Icon(Icons.person),
-                onTap: () {
-                  widget.signOut();
-                  Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (contex) => SigInPage()));
-                },
+        appBar: AppBar(
+          title: Text('View Recipes'),
+          actions: [
+            Center(
+              child: Container(
+                child: InkWell(
+                  child: Icon(Icons.person),
+                  onTap: () {
+                    widget.signOut();
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (contex) => SigInPage()));
+                  },
+                ),
               ),
-            ),
-          )
-        ],
-      ),
-      body: DelayedDisplay(
-          delay: Duration(seconds: 1),
-          child: StreamBuilder(
-            stream: FirebaseFirestore.instance
-                .collection('caloriecounter')
-                .doc(widget.gUser.email)
-                .collection('recipes')
-                .snapshots(),
-            builder:
-                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-              if (!snapshot.hasData) {
-                return Center(
-                  child: CircularProgressIndicator(),
+            )
+          ],
+        ),
+        body: StreamBuilder(
+          stream: FirebaseFirestore.instance
+              .collection('caloriecounter')
+              .doc(widget.gUser.email)
+              .collection('recipes')
+              .snapshots(),
+          builder:
+              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (!snapshot.hasData) return new Text('Loading...');
+            return new ListView(
+              children: snapshot.data!.docs.map((document) {
+                return InkWell(
+                  child: Container(
+                    padding: EdgeInsets.all(2),
+                    decoration:
+                        BoxDecoration(borderRadius: BorderRadius.circular(10)),
+                    child: new ListTile(
+                      title: Text(document['name'].toString()),
+                      subtitle: Text(document['grams'].toString()),
+                    ),
+                  ),
+                  onTap: () {
+                    print(document.reference.id);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (contex) => EditRecipePage(
+                                widget.gUser,
+                                widget.signOut,
+                                document,
+                                document.reference.id)));
+                  },
                 );
-              }
-              var recipes;
-
-              try {
-                recipes = snapshot.data!.docs;
-
-                setState(() {
-                  flag = false;
-                });
-              } catch (e) {
-                print("NO DATA");
-              }
-              if (flag) {
-                return Container();
-              } else {
-                return Column(
-                  children: [
-                    Expanded(
-                        flex: 4,
-                        child: Container(
-                          padding: EdgeInsets.all(10),
-                          child: recipes.length == 0
-                              ? Container(
-                                  child: Center(child: Text('NO DATA Found')))
-                              : ListView.builder(
-                                  itemCount: recipes.length,
-                                  itemBuilder: (context, index) {
-                                    return InkWell(
-                                      child: Container(
-                                        padding: EdgeInsets.all(2),
-                                        decoration: BoxDecoration(
-                                            border: Border.all(
-                                                width: 0.2,
-                                                color: Colors.grey)),
-                                        child: Row(
-                                          children: [
-                                            Expanded(
-                                                flex: 2,
-                                                child: Container(
-                                                    padding: EdgeInsets.all(12),
-                                                    child: RichText(
-                                                      text: TextSpan(
-                                                        text: recipes[index]
-                                                                ['name']
-                                                            .toString(),
-                                                        style:
-                                                            DefaultTextStyle.of(
-                                                                    context)
-                                                                .style,
-                                                        children: <TextSpan>[
-                                                          TextSpan(
-                                                              text: '\n ' +
-                                                                  recipes[index]
-                                                                          [
-                                                                          'grams']
-                                                                      .toString() +
-                                                                  ' g',
-                                                              style:
-                                                                  TextStyle()),
-                                                        ],
-                                                      ),
-                                                    ))),
-                                            Expanded(
-                                              child: Container(
-                                                alignment:
-                                                    Alignment.centerRight,
-                                                padding: EdgeInsets.all(12),
-                                                child: RichText(
-                                                  textAlign: TextAlign.right,
-                                                  text: TextSpan(
-                                                    text: recipes[index]
-                                                            ['calories']
-                                                        .toString(),
-                                                    style: DefaultTextStyle.of(
-                                                            context)
-                                                        .style,
-                                                    children: <TextSpan>[
-                                                      TextSpan(
-                                                          text: '\nC: ' +
-                                                              recipes[index]
-                                                                      ['carbon']
-                                                                  .toString(),
-                                                          style: TextStyle(
-                                                              fontSize: 12,
-                                                              color:
-                                                                  Colors.grey)),
-                                                      TextSpan(
-                                                          text: '\t F: ' +
-                                                              recipes[index]
-                                                                      ['fats']
-                                                                  .toString(),
-                                                          style: TextStyle(
-                                                              fontSize: 12,
-                                                              color: Colors
-                                                                  .orange)),
-                                                      TextSpan(
-                                                          text: '\t P: ' +
-                                                              recipes[index][
-                                                                      'protiens']
-                                                                  .toString(),
-                                                          style: TextStyle(
-                                                              fontSize: 12,
-                                                              color:
-                                                                  Colors.red))
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      onTap: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (contex) =>
-                                                    EditRecipePage(
-                                                        widget.gUser,
-                                                        widget.signOut,
-                                                        recipes[index])));
-                                      },
-                                    );
-                                  }),
-                        )),
-                  ],
-                );
-              }
-            },
-          )),
-    );
+              }).toList(),
+            );
+          },
+        ));
   }
 }
