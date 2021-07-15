@@ -1,6 +1,7 @@
 import 'package:caloriecounter/caloriecounter/userRegisterPage.dart';
 import 'package:caloriecounter/caloriecounter/viewPage.dart';
 import 'package:caloriecounter/logouPage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import "package:http/http.dart" as http;
@@ -28,9 +29,8 @@ class SigInPageState extends State<SigInPage> {
     _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount? account) {
       setState(() {
         _currentUser = account;
-
-        //documentPathOwner = '/caloriecounter/${_currentUser.toString()}';
       });
+
       if (_currentUser != null) {}
     });
     _googleSignIn.signInSilently();
