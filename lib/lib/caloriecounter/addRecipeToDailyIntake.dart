@@ -1,4 +1,5 @@
 import 'package:caloriecounter/caloriecounter/viewPage.dart';
+import 'package:caloriecounter/data/recipies.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -7,10 +8,10 @@ class AddRecipeToDailyIntake extends StatefulWidget {
   Function signOut;
   GoogleSignInAccount gUser;
   var document;
-  var recipes;
+  Recipies recipes;
   DateTime selectedDate;
   AddRecipeToDailyIntake(
-      this.document, this.gUser, this.recipes, this.signOut, this.selectedDate);
+      this.gUser, this.signOut, this.selectedDate, this.document, this.recipes);
 
   @override
   _AddRecipeToDailyIntakeState createState() => _AddRecipeToDailyIntakeState();
@@ -43,12 +44,12 @@ class _AddRecipeToDailyIntakeState extends State<AddRecipeToDailyIntake> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    nameController.text = widget.recipes['name'];
-    fatsController.text = widget.recipes['fats'].toString();
-    caloriesController.text = widget.recipes['calories'].toString();
-    gramsController.text = widget.recipes['grams'].toString();
-    carbonController.text = widget.recipes['carbon'].toString();
-    protiensController.text = widget.recipes['protiens'].toString();
+    nameController.text = widget.recipes.name;
+    fatsController.text = widget.recipes.fats.toString();
+    caloriesController.text = widget.recipes.calories.toString();
+    gramsController.text = widget.recipes.grams.toString();
+    carbonController.text = widget.recipes.carbon.toString();
+    protiensController.text = widget.recipes.protines.toString();
   }
 
   @override
@@ -262,6 +263,8 @@ class _AddRecipeToDailyIntakeState extends State<AddRecipeToDailyIntake> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
+          print(" ----------- Document Refernce " +
+              widget.recipes.name.toString());
           setState(() {
             addRecipesToDaily();
             calculate();

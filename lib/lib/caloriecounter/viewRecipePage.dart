@@ -85,15 +85,15 @@ class _ViewRecipePageState extends State<ViewRecipePage> {
               ),
               onTap: () {
                 print(document.reference.id);
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (contex) => AddRecipeToDailyIntake(
-                            document.reference.id,
-                            widget.gUser,
-                            document,
-                            widget.signOut,
-                            widget.selectedDate)));
+                // Navigator.push(
+                //     context,
+                //     MaterialPageRoute(
+                //         builder: (contex) => AddRecipeToDailyIntake(
+                //             document.reference.id,
+                //             widget.gUser,
+                //             document,
+                //             widget.signOut,
+                //             widget.selectedDate)));
               },
             );
           }).toList(),

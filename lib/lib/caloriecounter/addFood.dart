@@ -1,5 +1,7 @@
 import 'package:caloriecounter/caloriecounter/viewPage.dart';
 import 'package:caloriecounter/caloriecounter/viewRecipePage.dart';
+import 'package:caloriecounter/data/recipies.dart';
+import 'package:caloriecounter/demo/listbiewSearchPage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -8,8 +10,8 @@ class AddFood extends StatefulWidget {
   Function signOut;
   GoogleSignInAccount gUser;
   DateTime selectedDate;
-
-  AddFood(this.gUser, this.selectedDate, this.signOut);
+  List<Recipies> userRecipeList;
+  AddFood(this.gUser, this.selectedDate, this.signOut, this.userRecipeList);
 
   @override
   _AddFoodState createState() => _AddFoodState();

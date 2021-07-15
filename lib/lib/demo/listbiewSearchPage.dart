@@ -1,3 +1,5 @@
+import 'package:caloriecounter/caloriecounter/addRecipeToDailyIntake.dart';
+import 'package:caloriecounter/caloriecounter/editRecipePage.dart';
 import 'package:caloriecounter/caloriecounter/viewPage.dart';
 import 'package:caloriecounter/data/recipies.dart';
 import 'package:flutter/material.dart';
@@ -7,30 +9,40 @@ class ListViewSearchBar extends StatefulWidget {
   Function signOut;
   GoogleSignInAccount gUser;
   List<Recipies> userRecipeList;
-  ListViewSearchBar(this.gUser, this.signOut, this.userRecipeList);
+  DateTime selectedDate;
+  ListViewSearchBar(
+      this.gUser, this.signOut, this.userRecipeList, this.selectedDate);
   @override
   _ListViewSearchBarState createState() => _ListViewSearchBarState();
 }
 
 class _ListViewSearchBarState extends State<ListViewSearchBar> {
   List<Recipies> _foundRecipe = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _foundRecipe = widget.userRecipeList;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Search Bar'),
-        actions: [
-          Center(
-            child: Container(
-                child: InkWell(
-              child: Icon(Icons.arrow_back),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            )),
-          )
-        ],
-      ),
+      // appBar: AppBar(
+
+      //   actions: [
+      //     Center(
+      //       child: Container(
+      //           child: InkWell(
+      //         child: Icon(Icons.arrow_back),
+      //         onTap: () {
+      //           Navigator.pop(context);
+      //         },
+      //       )),
+      //     )
+      //   ],
+      // ),
       body: Padding(
         padding: const EdgeInsets.all(10),
         child: Column(
@@ -50,20 +62,28 @@ class _ListViewSearchBarState extends State<ListViewSearchBar> {
               child: _foundRecipe.length > 0
                   ? ListView.builder(
                       itemCount: _foundRecipe.length,
-                      itemBuilder: (context, index) => Card(
-                        key: ValueKey(_foundRecipe[index].name),
-                        color: Colors.amberAccent,
-                        elevation: 4,
-                        margin: EdgeInsets.symmetric(vertical: 10),
+                      itemBuilder: (context, index) => InkWell(
                         child: ListTile(
-                          // leading: Text(
-                          //   _foundRecipe[index].name.toString(),
-                          //   style: TextStyle(fontSize: 24),
-                          // ),
-                          title: Text(_foundRecipe[index].name.toString()),
-                          subtitle:
-                              Text('${_foundRecipe[index].grams.toString()} '),
+                          title: Text(
+                            _foundRecipe[index].name.toString(),
+                          ),
+                          subtitle: Text(_foundRecipe[index].grams.toString()),
                         ),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (contex) => AddRecipeToDailyIntake(
+                                        widget.gUser,
+                                        widget.signOut,
+                                        widget.selectedDate,
+                                        _foundRecipe[index].reference.id,
+                                        _foundRecipe[index],
+                                      )));
+                          print("On clicked on a particular recipe");
+                          print('--------------------' +
+                              _foundRecipe[index].name.toString());
+                        },
                       ),
                     )
                   : Text(

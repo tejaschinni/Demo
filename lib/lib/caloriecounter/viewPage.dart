@@ -152,7 +152,10 @@ class _ViewPageState extends State<ViewPage> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => AddFood(
-                                widget.gUser, _selectedDate, widget.signOut)));
+                                widget.gUser,
+                                _selectedDate,
+                                widget.signOut,
+                                userRecipieList)));
                   });
                 }),
             SpeedDialChild(
@@ -173,8 +176,11 @@ class _ViewPageState extends State<ViewPage> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>
-                                SearchBarDemo(userRecipieList)));
+                            builder: (context) => ListViewSearchBar(
+                                widget.gUser,
+                                widget.signOut,
+                                userRecipieList,
+                                _selectedDate)));
                   });
                 }),
           ],
@@ -202,11 +208,14 @@ class _ViewPageState extends State<ViewPage> {
                   child: Icon(Icons.smart_display),
                   onTap: () {
                     print(userRecipieList);
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (contex) => ListViewSearchBar(widget.gUser,
-                                widget.signOut, userRecipieList)));
+                    // Navigator.pushReplacement(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //         builder: (contex) => ListViewSearchBar(
+                    //             widget.gUser,
+                    //             widget.signOut,
+                    //             userRecipieList,
+                    //             _selectedDate)));
                   },
                 ),
               ),
